@@ -67,6 +67,8 @@ class Node:
                 x = head.x + head.width // 2 - head.children_length // 2
                 offset = min(x, offset)
                 for child in head.children:
+                    if child.is_label:
+                        x += LABEL_MARGIN
                     child.depth = head.depth + 1
                     child.x = x
                     child.y = (
@@ -82,34 +84,50 @@ class Node:
         self.y = CONTAINER_MARGIN
         canvas_width = 0
 
-        # check overlaps
-        for depth in depths:
-            if len(depth) < 2:
-                continue
+        def check_overlap(depths, i, recurse=True):
+            nonlocal canvas_width
             before = None
-            for node in depth:
-                if before and node.x - LABEL_MARGIN * self.is_label < (
-                    end := before.x
-                    + before.width
-                    + TEXT_MARGIN[0]
-                    + LABEL_MARGIN * self.is_label
-                ):
-                    node.head.x += end - node.x
-
-                    # center all the head "recursively"
-                    head = node.head.head
-                    while head:
-                        rnode = max(head.children, key=lambda x: x.x)
-                        lnode = min(head.children, key=lambda x: x.x)
-                        head._x = (
-                            lnode.x
-                            + (rnode.x + rnode.width - lnode.x) // 2
-                            - head.width // 2
+            for node in depths[i]:
+                if (
+                    before
+                    and (
+                        offset := node.x
+                        - (
+                            before.x
+                            + before.width
+                            + TEXT_MARGIN[0]
+                            + LABEL_MARGIN * (before.is_label + node.is_label)
                         )
-                        head = head.head
+                    )
+                    < 0
+                ):
+                    node.head.x -= offset
+                    if recurse:
+                        check_overlap(depths, i - 1, True)
 
                 before = node
-                canvas_width = max(node.x + node.width, canvas_width)
+                canvas_width = max(
+                    node.x + node.width + LABEL_MARGIN * node.is_label, canvas_width
+                )
+
+                # center all the head "recursively"
+                head = node.head
+                while head:
+                    rnode = max(head.children, key=lambda x: x.x)
+                    lnode = min(head.children, key=lambda x: x.x)
+                    head._x = (
+                        lnode.x
+                        + (rnode.x + rnode.width - lnode.x) // 2
+                        - head.width // 2
+                    )
+                    if recurse:
+                        check_overlap(
+                            depths, head.depth - 1, False  # don't recurse here
+                        )
+                    head = head.head
+
+        for i in range(len(depths)):
+            check_overlap(depths, i)
 
         canvas_height = (
             HEIGHT_PER_DEPTH * len(depths)
