@@ -3,12 +3,22 @@ from PIL import Image, ImageDraw
 from src.config import *
 from src.parser_ import Parser
 
-parser = Parser(input("Type in the sentence: "))
+buffer = []
+text = "Type in the sentence (hit enter twice): "
+while 1:
+    if (temp := input(text)) == "":
+        break
+
+    buffer.append(temp)
+    text = ": "
+
+print("\nPlease wait...")
+
+parser = Parser("".join(buffer))
 node = parser.get_head()
 nodes, size = node.calculate_and_get_nodes()
 out = Image.new("RGB", size, BG_COLOUR)
 d = ImageDraw.Draw(out)
-x = CONTAINER_MARGIN
 
 for i, siblings in enumerate(nodes):
     for node in siblings:
@@ -60,3 +70,5 @@ for i, siblings in enumerate(nodes):
 
 # TODO: File output CLI argument
 out.show()
+
+print("Done!")
