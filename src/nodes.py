@@ -18,6 +18,7 @@ class Node:
         self.draws_triangle = False
         # optimisations
         self.depth = 1
+        self.index = 0
 
     @property
     def x(self) -> int:
@@ -61,6 +62,46 @@ class Node:
     def is_end(self) -> bool:
         return not self.children
 
+    @staticmethod
+    def check_overlap(depths, i, skip=0):
+        before = None
+        iter_ = iter(depths[i])
+        for _ in range(skip):
+            next(iter_)
+        for node in iter_:
+            if (
+                before
+                and (
+                    offset := (
+                        before.x
+                        + before.width
+                        + TEXT_MARGIN[0]
+                        + LABEL_MARGIN * (before.is_label + node.is_label)
+                    )
+                    - node.x
+                )
+                > 0
+            ):
+                node.head.x += offset
+                # head is shifted now, may overlap so check for that
+                Node.check_overlap(depths, i - 1, node.head.index + 1)
+
+                # center all the heads recursively
+                head = node.head
+                while head:
+                    rnode = max(head.children, key=lambda x: x.x)
+                    lnode = min(head.children, key=lambda x: x.x)
+                    head._x = (
+                        lnode.x
+                        + (rnode.x + rnode.width - lnode.x) // 2
+                        - head.width // 2
+                    )
+                    # head is shifted now, may overlap so check for that
+                    Node.check_overlap(depths, head.depth - 1, head.index + 1)
+                    head = head.head
+
+            before = node
+
     def calculate_and_get_nodes(self):
         depths = [[self]]
         current = depths[0]
@@ -69,10 +110,11 @@ class Node:
             for head in current:
                 temp.extend(head.children)
                 x = head.x + head.width // 2 - head.children_length // 2
-                for child in head.children:
+                for i, child in enumerate(head.children):
                     if child.is_label:
                         x += LABEL_MARGIN
                     child.depth = head.depth + 1
+                    child.index = i
                     child.x = x
                     child.y = (
                         HEIGHT_PER_DEPTH + TEXT_MARGIN[1] + LABEL_MARGIN * 2
@@ -85,44 +127,8 @@ class Node:
 
         self.y = CONTAINER_MARGIN
 
-        def check_overlap(depths, i):
-            before = None
-            for node in depths[i]:
-                if (
-                    before
-                    and (
-                        offset := (
-                            before.x
-                            + before.width
-                            + TEXT_MARGIN[0]
-                            + LABEL_MARGIN * (before.is_label + node.is_label)
-                        )
-                        - node.x
-                    )
-                    > 0
-                ):
-                    node.head.x += offset
-                    # head is shifted now, may overlap so check for that
-                    check_overlap(depths, i - 1)
-
-                    # center all the heads recursively
-                    head = node.head
-                    while head:
-                        rnode = max(head.children, key=lambda x: x.x)
-                        lnode = min(head.children, key=lambda x: x.x)
-                        head._x = (
-                            lnode.x
-                            + (rnode.x + rnode.width - lnode.x) // 2
-                            - head.width // 2
-                        )
-                        # head is shifted now, may overlap so check for that
-                        check_overlap(depths, head.depth - 1)
-                        head = head.head
-
-                before = node
-
         for i in range(len(depths)):
-            check_overlap(depths, i)
+            Node.check_overlap(depths, i)
 
         # naturally, some portion of the diagram will be out of frame
         # shift it to the right
