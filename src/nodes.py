@@ -44,9 +44,11 @@ class Node:
 
     @property
     def children_length(self) -> int:
-        return sum(i.width for i in self.children) + (
-            TEXT_MARGIN[0] + (LABEL_MARGIN * 2) * self.is_label
-        ) * (len(self.children) - 1)
+        return (
+            sum(i.width for i in self.children)
+            + (TEXT_MARGIN[0]) * (len(self.children) - 1)
+            + sum([LABEL_MARGIN * 2 for i in self.children if i.is_label])
+        )
 
     @property
     def is_label(self) -> bool:
