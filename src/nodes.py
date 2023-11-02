@@ -10,10 +10,13 @@ class Node:
             head.children.append(self)
         self.children: list[Node] = []
         self._text: str = ""
+        # this only accounts for the text, excluding margins and containers
         self.width = 0
+        # set this var directly unless you want to also shift the children's pos accordingly
         self._x = 0
         self.y = 0
         self.draws_triangle = False
+        # optimisations
         self.depth = 1
 
     @property
@@ -102,7 +105,7 @@ class Node:
                     # head is shifted now, may overlap so check for that
                     check_overlap(depths, i - 1)
 
-                    # center all the head recursively
+                    # center all the heads recursively
                     head = node.head
                     while head:
                         rnode = max(head.children, key=lambda x: x.x)
@@ -121,6 +124,8 @@ class Node:
         for i in range(len(depths)):
             check_overlap(depths, i)
 
+        # naturally, some portion of the diagram will be out of frame
+        # shift it to the right
         self.x -= min([j.x for i in depths for j in i]) - CONTAINER_MARGIN
         canvas_height = (
             HEIGHT_PER_DEPTH * len(depths)
