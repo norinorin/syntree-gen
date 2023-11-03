@@ -4,10 +4,10 @@ from src.config import *
 
 
 class Node:
-    def __init__(self, head: t.Optional["Node"] = None) -> None:
-        self.head = head
-        if head:
-            head.children.append(self)
+    def __init__(self, parent: t.Optional["Node"] = None) -> None:
+        self.parent = parent
+        if parent:
+            parent.children.append(self)
         self.children: list[Node] = []
         self._text: str = ""
         # this only accounts for the text, excluding margins and containers
@@ -40,7 +40,7 @@ class Node:
         if val and val[0] == "^":
             val = val[1:]
             self.draws_triangle = True
-        self._text = val
+        self._text = "\u2205" if val == "\\0" else val
         self.width = int(FONT.getlength(val))
 
     def __repr__(self) -> str:
@@ -84,19 +84,19 @@ class Node:
             ):
                 node.x += offset
 
-                # center all the heads recursively
-                head = node.head
-                while head:
-                    rnode = max(head.children, key=lambda x: x.x)
-                    lnode = min(head.children, key=lambda x: x.x)
-                    head._x = (
+                # center all the parents recursively
+                parent = node.parent
+                while parent:
+                    rnode = max(parent.children, key=lambda x: x.x)
+                    lnode = min(parent.children, key=lambda x: x.x)
+                    parent._x = (
                         lnode.x
                         + (rnode.x + rnode.width - lnode.x) // 2
-                        - head.width // 2
+                        - parent.width // 2
                     )
-                    # head is shifted now, may overlap so check for that
-                    Node.check_overlap(depths, head.depth - 1, head.index)
-                    head = head.head
+                    # parent is shifted now, may overlap so check for that
+                    Node.check_overlap(depths, parent.depth - 1, parent.index)
+                    parent = parent.parent
 
             before = node
 
@@ -105,13 +105,13 @@ class Node:
         current = depths[0]
         while current:
             temp = []
-            for head in current:
-                temp.extend(head.children)
-                x = head.x + head.width // 2 - head.children_length // 2
-                for i, child in enumerate(head.children):
+            for parent in current:
+                temp.extend(parent.children)
+                x = parent.x + parent.width // 2 - parent.children_length // 2
+                for i, child in enumerate(parent.children):
                     if child.is_label:
                         x += LABEL_MARGIN
-                    child.depth = head.depth + 1
+                    child.depth = parent.depth + 1
                     child.index = i
                     child.x = x
                     child.y = (

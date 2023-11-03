@@ -15,7 +15,7 @@ while 1:
 print("\nPlease wait...")
 
 parser = Parser("".join(buffer))
-node = parser.get_head()
+node = parser.get_first_parent()
 nodes, size = node.calculate_and_get_nodes()
 out = Image.new("RGB", size, BG_COLOUR)
 d = ImageDraw.Draw(out)
@@ -40,11 +40,11 @@ for i, siblings in enumerate(nodes):
             fill=get_label_colour(node.text)[1] if node.is_label else END_COLOUR,
             font=FONT,
         )
-        if head := node.head:
-            if head.draws_triangle:
+        if parent := node.parent:
+            if parent.draws_triangle:
                 p1 = (
-                    head.x + head.width // 2,
-                    head.y + HEIGHT_PER_DEPTH + LABEL_MARGIN + LINE_MARGIN,
+                    parent.x + parent.width // 2,
+                    parent.y + HEIGHT_PER_DEPTH + LABEL_MARGIN + LINE_MARGIN,
                 )
                 p2 = (node.x + TEXT_MARGIN[0], node.y)
                 p3 = (node.x + node.width - TEXT_MARGIN[0], node.y)
@@ -60,8 +60,8 @@ for i, siblings in enumerate(nodes):
                         - LINE_MARGIN,
                     ),
                     (
-                        head.x + head.width // 2,
-                        head.y + HEIGHT_PER_DEPTH + LABEL_MARGIN + LINE_MARGIN,
+                        parent.x + parent.width // 2,
+                        parent.y + HEIGHT_PER_DEPTH + LABEL_MARGIN + LINE_MARGIN,
                     ),
                 ),
                 LINE_COLOUR,

@@ -42,7 +42,7 @@ class Parser:
                     self._raise_syntax_error("text can't have square brackets")
                 self.cursor -= 1
                 return "".join(buffer)
-        return ""  # unexpected eof, handled in get_head
+        return ""  # unexpected eof, handled in get_first_parent
 
     def get_text(self) -> str:
         buffer = []
@@ -56,7 +56,7 @@ class Parser:
             buffer.append(self.current)
         return ""
 
-    def get_head(self) -> Node:
+    def get_first_parent(self) -> Node:
         current = None
         while not self.is_eof:
             self.skip_ws()
@@ -69,7 +69,7 @@ class Parser:
                 self.depth -= 1
                 if self.depth < 1:
                     self._raise_syntax_error("square brackets don't match")
-                current = current.head
+                current = current.parent
             else:
                 child = Node(current)
                 child.text = self.consume_this_depth()
