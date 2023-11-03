@@ -82,9 +82,7 @@ class Node:
                 )
                 > 0
             ):
-                node.head.x += offset
-                # head is shifted now, may overlap so check for that
-                Node.check_overlap(depths, i - 1, node.head.index + 1)
+                node.x += offset
 
                 # center all the heads recursively
                 head = node.head
@@ -126,20 +124,22 @@ class Node:
             current = temp
 
         self.y = CONTAINER_MARGIN
+        # naturally, some portion of the diagram will be out of frame
+        # shift it to the right
+        self.x -= min([j.x for i in depths for j in i]) - CONTAINER_MARGIN
 
         for i in range(len(depths)):
             Node.check_overlap(depths, i)
 
-        # naturally, some portion of the diagram will be out of frame
-        # shift it to the right
-        self.x -= min([j.x for i in depths for j in i]) - CONTAINER_MARGIN
         canvas_height = (
             HEIGHT_PER_DEPTH * len(depths)
             + (len(depths) - 1) * (TEXT_MARGIN[1] + LABEL_MARGIN * 2)
             + CONTAINER_MARGIN * 2
         )
-        canvas_width = max([j.x + j.width for i in depths for j in i])
-        return depths, (canvas_width + CONTAINER_MARGIN, canvas_height)
+        canvas_width = (
+            max([j.x + j.width for i in depths for j in i]) + CONTAINER_MARGIN
+        )
+        return depths, (canvas_width, canvas_height)
 
     def set_size(self, x, y):
         self.x = x
