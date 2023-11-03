@@ -46,8 +46,8 @@ for i, siblings in enumerate(nodes):
                     head.x + head.width // 2,
                     head.y + HEIGHT_PER_DEPTH + LABEL_MARGIN + LINE_MARGIN,
                 )
-                p2 = (node.x + TEXT_MARGIN[0], node.y + LABEL_MARGIN)
-                p3 = (node.x + node.width - TEXT_MARGIN[0], node.y + LABEL_MARGIN)
+                p2 = (node.x + TEXT_MARGIN[0], node.y)
+                p3 = (node.x + node.width - TEXT_MARGIN[0], node.y)
                 d.polygon((p1, p2, p3), outline=LINE_COLOUR, width=LINE_WIDTH)
                 continue
 
