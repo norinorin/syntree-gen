@@ -19,7 +19,7 @@ LABEL_MARGIN = 25
 LINE_COLOUR = "black"
 LINE_WIDTH = 8
 LINE_MARGIN = 18
-FONT_NAME = "Times New Roman"
+FONT_NAME = "Arial Unicode MS"
 FONT = get_font(FONT_NAME, FONT_SIZE)
 HEIGHT_PER_DEPTH = sum(FONT.getmetrics())
 
