@@ -140,7 +140,3 @@ class Node:
             max([j.x + j.width for i in depths for j in i]) + CONTAINER_MARGIN
         )
         return depths, (canvas_width, canvas_height)
-
-    def set_size(self, x, y):
-        self.x = x
-        self.y = y
