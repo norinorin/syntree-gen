@@ -95,7 +95,7 @@ class Node:
                         - head.width // 2
                     )
                     # head is shifted now, may overlap so check for that
-                    Node.check_overlap(depths, head.depth - 1, head.index + 1)
+                    Node.check_overlap(depths, head.depth - 1, head.index)
                     head = head.head
 
             before = node
