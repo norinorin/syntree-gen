@@ -1,6 +1,7 @@
 from src.font import get_font
 
 # TODO: CLI arguments
+RECTANGLE_RADIUS = 25
 CONTAINER_MARGIN = 50
 TEXT_MARGIN = 50, 120
 FONT_SIZE = 120

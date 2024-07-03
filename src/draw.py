@@ -13,7 +13,7 @@ def draw_nodes(nodes, draw):
                             node.y + HEIGHT_PER_DEPTH + LABEL_MARGIN,
                         ),
                     ),
-                    radius=25,
+                    radius=RECTANGLE_RADIUS,
                     fill=get_label_colour(node.text)[0],
                 )
             draw.text(
