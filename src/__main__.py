@@ -1,8 +1,10 @@
 from PIL import Image, ImageDraw
 
+from src.cli import get_args
 from src.config import *
 from src.parser_ import Parser
 
+args = get_args()
 buffer = []
 text = "Type in the sentence (hit enter twice): "
 while 1:
@@ -68,7 +70,9 @@ for i, siblings in enumerate(nodes):
                 LINE_WIDTH,
             )
 
-# TODO: File output CLI argument
 out.show()
+
+if args.path:
+    out.save(args.path)
 
 print("Done!")
