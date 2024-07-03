@@ -1,6 +1,8 @@
+import json
+
+from src.cli import ARGS
 from src.font import get_font
 
-# TODO: CLI arguments
 RECTANGLE_RADIUS = 25
 CONTAINER_MARGIN = 50
 TEXT_MARGIN = 50, 120
@@ -23,6 +25,11 @@ LABEL_COLOURS = {
     "P": ("#e574bc", "white"),
     "PP": ("#f9b4ed", "#3A3B3C"),
 }
+
+if ARGS.colour_scheme:
+    with open(ARGS.colour_scheme, "r") as f:
+        LABEL_COLOURS.update(json.load(f))
+
 LABEL_MARGIN = 25
 LINE_COLOUR = "#3A3B3C"
 LINE_WIDTH = 8

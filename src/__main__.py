@@ -1,11 +1,10 @@
 from PIL import Image, ImageDraw
 
-from src.cli import get_args
+from src.cli import ARGS
 from src.config import BG_COLOUR
 from src.draw import draw_nodes
 from src.parser_ import Parser
 
-args = get_args()
 buffer = []
 text = "Type in the sentence (hit enter twice): "
 while 1:
@@ -24,9 +23,9 @@ out = Image.new("RGB", size, BG_COLOUR)
 d = ImageDraw.Draw(out)
 draw_nodes(nodes, d)
 
-if args.path:
-    print("Saving to", args.path)
-    out.save(args.path)
+if ARGS.path:
+    print("Saving to", ARGS.path)
+    out.save(ARGS.path)
 
 out.show()
 print("Done!")
