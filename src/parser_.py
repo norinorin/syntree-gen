@@ -92,12 +92,13 @@ class Parser:
 
     def _raise_syntax_error(self, msg):
         n = os.get_terminal_size().columns - 6
-        end = min(self.length - self.cursor, n // 2)
-        start = n - end
-        ellipsis_start = self.cursor - start > 0
-        ellipsis_end = self.cursor + end < self.length
+        lhcc = min(self.cursor, n // 2)  # left hand char count
+        start = self.cursor - lhcc
+        end = self.cursor + (n - lhcc)
+        ellipsis_start = start > 0
+        ellipsis_end = end < self.length
         raise SyntaxError(
             f"{msg} at {self.cursor+1}\n"
-            f"{'...' * ellipsis_start}{self.text[self.cursor-start:self.cursor+end]}{'...' * ellipsis_end}\n"
-            f"{' '*(min(n-end, self.cursor) + 3 * ellipsis_start)}^"
+            f"{'...' * ellipsis_start}{self.text[start:end]}{'...' * ellipsis_end}\n"
+            f"{' '*((self.cursor - start) + 3 * ellipsis_start)}^"
         )
