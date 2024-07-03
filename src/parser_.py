@@ -2,6 +2,8 @@ import os
 
 from src.nodes import Node
 
+ESCAPE_SEQUENCES = {"\\0": "\u2205", "\\s": " ", "\\lb": "[", "\\rb": "]"}
+
 
 class Parser:
     def __init__(self, text: str) -> None:
@@ -33,6 +35,12 @@ class Parser:
         self.cursor += 1
         return self.text[self.cursor]
 
+    def _join_buffer(self, buffer) -> str:
+        ret = "".join(buffer)
+        for old, new in ESCAPE_SEQUENCES.items():
+            ret = ret.replace(old, new)
+        return ret
+
     def consume_this_depth(self) -> str:
         buffer = []
         while not self.is_eof:
@@ -43,7 +51,7 @@ class Parser:
                 if "[" in buffer or "]" in buffer:
                     self._raise_syntax_error("text can't have square brackets")
                 self.cursor -= 1
-                return "".join(buffer)
+                return self._join_buffer(buffer)
         return ""  # unexpected eof, handled in get_first_parent
 
     def get_text(self) -> str:
@@ -52,7 +60,7 @@ class Parser:
             if self.next().isspace():
                 if "[" in buffer or "]" in buffer:
                     self._raise_syntax_error("label can't have square brackets")
-                return "".join(buffer)
+                return self._join_buffer(buffer)
             if self.current in "[]":
                 self._raise_syntax_error("label can't have square brackets")
             buffer.append(self.current)
