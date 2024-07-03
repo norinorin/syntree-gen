@@ -24,10 +24,9 @@ out = Image.new("RGB", size, BG_COLOUR)
 d = ImageDraw.Draw(out)
 draw_nodes(nodes, d)
 
-out.show()
-
 if args.path:
     print("Saving to", args.path)
     out.save(args.path)
 
+out.show()
 print("Done!")
