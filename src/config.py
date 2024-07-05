@@ -9,26 +9,12 @@ TEXT_MARGIN = 50, 120
 FONT_SIZE = 120
 BG_COLOUR = "white"
 END_COLOUR = "#3A3B3C"
-LABEL_COLOUR_DEFAULT = ("#ff7477", "white")
-LABEL_COLOURS = {
-    # label bg text
-    "S": ("#845EC2", "white"),
-    "V": ("#D65DB1", "white"),
-    "VP": ("#FF6F91", "white"),
-    "N": ("#FF9671", "white"),
-    "NP": ("#FFC75F", "#3A3B3C"),
-    "Adj": ("#F9F871", "#3A3B3C"),
-    "AdjP": ("#bdb2ff", "#3A3B3C"),
-    "Adv": ("#c1fba4", "#3A3B3C"),
-    "C": ("#ffd972", "#3A3B3C"),
-    "CP": ("#e8ffb7", "#3A3B3C"),
-    "P": ("#e574bc", "white"),
-    "PP": ("#f9b4ed", "#3A3B3C"),
-}
+LABEL_COLOURS = {}
 
-if ARGS.colour_scheme:
-    with open(ARGS.colour_scheme, "r") as f:
-        LABEL_COLOURS.update(json.load(f))
+with open(ARGS.colour_scheme or "default_colours.json", "r") as f:
+    LABEL_COLOURS.update(json.load(f))
+
+LABEL_COLOUR_DEFAULT = LABEL_COLOURS.pop("{default}", ("#ff7477", "white"))
 
 LABEL_MARGIN = 25
 LINE_COLOUR = "#3A3B3C"

@@ -4,3 +4,4 @@ __pycache__/
 *.jpg
 *.json
 !sample.png
+!default_colours.json
