@@ -40,7 +40,7 @@ class Node:
         if val and val[0] == "^":
             val = val[1:]
             self.draws_triangle = True
-        self._text = "\u2205" if val == "\\0" else val
+        self._text = val
         self.width = int(FONT.getlength(val))
 
     def __repr__(self) -> str:
