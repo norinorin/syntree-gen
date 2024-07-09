@@ -23,6 +23,9 @@ out = Image.new("RGB", size, BG_COLOUR)
 d = ImageDraw.Draw(out)
 draw_nodes(nodes, d)
 
+# TODO: cli & draw larger so it doesn't affect the size of the resulting image
+out.resize((size[0] // 2, size[1] // 2), resample=Image.LANCZOS)
+
 if ARGS.path:
     print("Saving to", ARGS.path)
     out.save(ARGS.path)
